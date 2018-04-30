@@ -1,0 +1,4 @@
+<%# どこのスキル推奨数ボタンであるかを特定 %>
+<% selector = '#skill_' << @skill_id.to_s %>
+<%# 対象のセレクタに対して、ajaxで処理された結果を格納 %>
+$("<%= selector %>").html("<%= j button_to @skill_recommend_count, ajax_update_skills_path(skill_id: @skill_id, user_id: @owner_user), remote: true %>");

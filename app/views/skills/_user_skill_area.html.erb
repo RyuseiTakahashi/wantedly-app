@@ -1,0 +1,20 @@
+<% user_recommend_count_each_skills.each_with_index do |(skill_key,skill_val),skill_index| %>
+    <p>
+        <%# スキルの推奨を１度もされていないスキルはレコードが空のため %>
+        <% skill_count = skill_recommend_count[skill_key].blank? ? 0 : skill_recommend_count[skill_key].length %>
+        <div id="<%= 'skill_' << skill_key.to_s %>" class="user_skill_area_button">
+            <%# スキルの推薦数が表示されているボタン。 %>
+            <%= button_to skill_count, ajax_update_skills_path(skill_id: skill_key, owner_user: user.id), remote: true %>
+        </div>
+        <%# スキル名。スキル名を押下した時、押下したスキルの所有者一覧を表示 %>
+        <%= link_to skill_val.first.name, user_path(:id => skill_key) %>
+
+        <%# 上位６件のスキルに対して、スキルを推薦してくれているユーザーを１０件まで表示 %>
+        <% if 6 > skill_index && !(@recommend_skill_users.blank? || @recommend_skill_users[skill_key].blank?) %>
+            <% @recommend_skill_users[skill_key].each_with_index do |skill, user_index| %>
+                <%# スキルを推薦してくれているユーザー %>
+                ＠<%= link_to skill.user.name, skill_path(:id => skill.user_id) if user_index < 9 %>
+            <% end %>
+        <% end %>
+    </p>
+<% end %>

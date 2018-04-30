@@ -1,0 +1,11 @@
+<div id="skill_master_area">
+    <%= form_for(skill, url: skills_path(user_id: skill.user_id), method: :post, remote: true) do |f| %>
+        <% skill_master.each do |skill| %>
+            <p>
+                <%= f.check_box :id, {multiple: true}, skill.id,  nil %>
+                <%= skill.name %>
+            </p>
+        <% end %>
+        <%= f.submit %>
+    <% end %>
+</div>

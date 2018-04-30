@@ -1,0 +1,5 @@
+<%= @skill.name %><span>のスキルを持っているユーザー一覧</span>
+
+<% @same_skill_users.each do |user| %>
+    <p><%= link_to user.name, skill_path(:id => user.id) %></p>
+<% end %>

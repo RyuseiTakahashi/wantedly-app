@@ -1,0 +1,23 @@
+<h1>ログインユーザー：<%= current_user.name %>さん</h1>
+
+<h1><%= @user.name %><span>さんのスキル・特徴</span></h1>
+<div id="user_has_skill_area">
+    <%# 対象ユーザーが所有しているスキル一覧を表示 %>
+    <%= render 'user_skill_area', user_recommend_count_each_skills: @user_recommend_count_each_skills, skill_recommend_count: @skill_recommend_count, user: @user %>
+</div>
+
+<h1><%= @user.name %>さんに追加することができるスキル・特徴</h1>
+<%# 対象ユーザーに追加することができるスキルマスターの一覧を表示 %>
+<%= render 'form', skill_master: @skill_master, skill: @skill, user: @user %>
+
+<h1><%= "上記のスキル一覧に追加したいスキルがなければ新しくスキルを作る" %></h1>
+<%# スキルマスターの一覧に自分に追加したいスキルが無いときに、自分でスキルを作成するフォーム %>
+<%= form_for(@create_skills, url: skill_masters_path(user_id: @user.id), method: :post, remote: true) do |f| %>
+    <p><%= f.text_field :name %></p>
+    <%= f.submit %>
+<% end %>
+
+<%# ログインユーザーのトップページへ遷移 %>
+<%= link_to "トップへ戻る", skill_path(:id => current_user.id) %>
+<br />
+<%= link_to 'ログアウト', logins_path, :confirm => 'ログアウトしますか？', :method => :delete %>

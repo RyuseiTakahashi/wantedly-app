@@ -1,0 +1,36 @@
+<h1>ログイン画面</h1>
+
+<p><font color=red><%= flash[:alert] %></font></p>
+<%= form_tag logins_path do %>
+    <table id="login_form">
+        <tr>
+            <td><%= label_tag :name, 'ユーザー名' %></td>
+            <td><%= text_field_tag :name, params[:name] %></td>
+        </tr>
+        <tr>
+            <td><%= label_tag :pass, 'パスワード' %></td>
+            <td><%= password_field_tag :pass, params[:pass] %></td>
+        </tr>
+        <tr>
+            <td><%= submit_tag "ログイン" %></td>
+        </tr>
+    </table>
+<% end %>
+
+<h1>ユーザーを作る</h1>
+
+<%= form_tag users_path do %>
+    <table id="login_form">
+        <tr>
+            <td><%= label_tag :name, 'ユーザー名' %></td>
+            <td><%= text_field_tag :name %></td>
+        </tr>
+        <tr>
+            <td><%= label_tag :pass, 'パスワード' %></td>
+            <td><%= password_field_tag :password_digest %></td>
+        </tr>
+        <tr>
+            <td><%= submit_tag "ユーザーを作る" %></td>
+        </tr>
+    </table>
+<% end %>

@@ -1,0 +1,7 @@
+<%# ajaxでスキルマスタの一覧から対象ユーザーにスキルを追加した時 %>
+<% if @skill_master_all.blank? %>
+    $("#user_has_skill_area").append("<%= j (render 'user_skill_area', user_recommend_count_each_skills: @new_skills, skill_recommend_count: @skill_recommend_count, user: @user) %>");
+<%# ajaxでスキルマスタにスキルを追加した時 %>
+<% else %>
+    $("#skill_master_area").html("<%= j (render 'skills/form', skill_master: @skill_master_all, skill: @skill_master) %>");
+<% end %>
