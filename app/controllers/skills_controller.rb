@@ -1,28 +1,21 @@
 class SkillsController < ApplicationController
     def show
+      skill = Skill.new
       # 対象ユーザー
       @user = User.find params[:id]
       # 対象ユーザーが所有しているスキル一覧を取得。
-      user_has_skills = SkillMaster.left_outer_joins(:skills).where(skills: {user_id: params[:id]}).group_by {|g| g.id}
-      # 対象ユーザーが所有している各スキルの推薦数を各スキルごとにグループ分けして取得。この時誰からも推薦されていないスキルはレコードが存在しない。なので、誰からも推薦されていないスキルは後から追加。
-      user_recommend_count_each_skills = SkillRecommend.where(owner_user_id: params[:id], recommend_flg: 1).where.not(skill_master_id: nil).group(:skill_master_id).count
-      # スキルの推薦数を降順でソート。
-      @user_recommend_count_each_skills = Hash[ user_recommend_count_each_skills.sort_by{ |_, v| -v } ]
-      # 誰からも推薦されていないスキルを追加
-      user_has_skills.each do |skill_key,skill_val|
-        @user_recommend_count_each_skills.store(skill_key, skill_val)
-      end
+      user_has_skills = skill.get_skills_of_target_user params[:id], current_user.id
+      # 推薦数が多い順に対象ユーザーが保持しているスキルを取得
+      @user_recommend_count_each_skills = skill.get_user_recommend_count params[:id], user_has_skills
       # 対象ユーザーのスキルを推薦されているレコードを取得し、スキルIDごとにグループ分けを行う。各スキルIDのvalの要素数の値が推薦数となる。
-      @skill_recommend_count = SkillRecommend.where(
-        recommend_flg: 1,
-        owner_user_id: params[:id],
-        skill_master_id: user_has_skills.keys
-      ).group_by {|g| g.skill_master_id}
+      @skill_recommend_count = skill.get_skill_recommend_count params[:id], user_has_skills
 
       @skill_master = SkillMaster.all
       @create_skills = SkillMaster.new
       @skill = Skill.new(:user_id => params[:id])
-      
+      # 他のユーザーに追加されたスキルを取得
+      @other_user_add_skills = skill.get_skill_id_other_user_add_skill_to_me params[:id]
+
       # スキルIDをkeyとして、valに対象スキルを保有しているユーザーを格納
       @recommend_skill_users = SkillRecommend.where(owner_user_id: params[:id], recommend_flg: 1).where.not(skill_master_id: nil).group_by {|g| g.skill_master_id}
 
@@ -43,6 +36,8 @@ class SkillsController < ApplicationController
       params[:skill][:id].each do |skill|
         @add_skill = Skill.new(
           user_id: params[:user_id],
+          create_skill_user_id: current_user.id,
+          display_flg: 0,
           skill_master_id: skill.to_i
         )
         @add_skill.save
@@ -50,6 +45,8 @@ class SkillsController < ApplicationController
       end
       # 追加するスキルをスキルIDでグループ分け
       @new_skills = SkillMaster.where(id: new_skill_ids).group_by{|g| g.id}
+      # 他のユーザーに追加されたスキルを取得
+      @other_user_add_skills = Skill.new.get_skill_id_other_user_add_skill_to_me params[:user_id]
 
       respond_to do |format|
         format.html 
@@ -88,6 +85,23 @@ class SkillsController < ApplicationController
       @skill_recommend_count = SkillRecommend.where(skill_master_id: params[:skill_id], owner_user_id: params[:owner_user], recommend_flg: 1).length
 
       @owner_user = params[:owner_user]
+      @skill_id = params[:skill_id]
+
+      respond_to do |format|
+        format.js
+      end
+    end
+
+    def ajax_display
+      @update_skill_display = Skill.where(skill_master_id: params[:skill_id], user_id: params[:user_id]).first
+      # 非表示のとき
+      if @update_skill_display.display_flg == 1
+        @update_skill_display.update_attribute(:display_flg, 0)
+      # 表示の時
+      else
+        @update_skill_display.update_attribute(:display_flg, 1)
+      end
+      @user_id = params[:user_id]
       @skill_id = params[:skill_id]
 
       respond_to do |format|

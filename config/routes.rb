@@ -8,10 +8,11 @@ Rails.application.routes.draw do
   resources :skills, only: [:show, :new, :create] do
     collection do
       post :ajax_update
+      post :ajax_display
     end
   end
 
-  resources :skill_masters, only: [:new, :create] do
+  resources :skill_masters, only: [:new, :create, :destroy] do
     
   end
 

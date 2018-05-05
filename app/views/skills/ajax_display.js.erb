@@ -1,0 +1,6 @@
+<%# 対象のセレクタを設定 %>
+<% selector = '#display_' << @skill_id.to_s %>
+<%# 表示flgが１のときに非表示 %>
+<% display_title = @update_skill_display.display_flg == 1 ? "非表示" : "表示" %>
+<%# 他ユーザーに追加されたスキルはスキルの非表示・表示を設定できる %>
+$("<%= selector %>").html("<%= j button_to display_title, ajax_display_skills_path(skill_id: @skill_id, user_id: @user_id), remote: true %>");

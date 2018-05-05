@@ -1,9 +1,10 @@
 <div id="skill_master_area">
     <%= form_for(skill, url: skills_path(user_id: skill.user_id), method: :post, remote: true) do |f| %>
-        <% skill_master.each do |skill| %>
+        <% skill_master.each do |skill_master| %>
             <p>
-                <%= f.check_box :id, {multiple: true}, skill.id,  nil %>
-                <%= skill.name %>
+                <%= f.check_box :id, {multiple: true}, skill_master.id,  nil %>
+                <%= skill_master.name %>
+                <%= link_to "削除", skill_master_path(:id => skill_master.id, user_id: skill.user_id), method: :delete %>
             </p>
         <% end %>
         <%= f.submit %>

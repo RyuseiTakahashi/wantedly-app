@@ -1,5 +1,6 @@
 <%= @skill.name %><span>のスキルを持っているユーザー一覧</span>
 
+<%# 同じスキルを保持しているユーザー達を表示。リンクを押下すると対象ユーザーのスキル一覧画面に遷移 %>
 <% @same_skill_users.each do |user| %>
     <p><%= link_to user.name, skill_path(:id => user.id) %></p>
 <% end %>

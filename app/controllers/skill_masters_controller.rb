@@ -16,4 +16,8 @@ class SkillMastersController < ApplicationController
     end
   end
 
+  def destroy
+    skill_master = SkillMaster.find(params[:id]).destroy
+  end
+
 end
