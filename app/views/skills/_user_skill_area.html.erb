@@ -10,15 +10,18 @@
         <%= link_to skill_val.first.name, user_path(:id => skill_key) %>
 
         <% unless @other_user_add_skills.blank? %>
-            <%# 自分以外の人が自分に追加したスキルは表示・非表示の設定が行えるボタンを表示 %>
-            <span id="<%= 'display_' << skill_key.to_s %>">
-                <%# flgが表示（１以外の時）のときは非表示のテキストを代入、それ以外は表示のテキストを代入 %>
-                <% display_title = @other_user_add_skills[skill_key].first.display_flg == 1 ? "非表示" : "表示" %>
-                <%# 自分以外の人が追加したスキル and ログインユーザーとスキルを追加するユーザーが同じ場合のときに表示（true）を代入 %>
-                <% display_or_not = @other_user_add_skills.keys.include?(skill_key) && user.id.to_i == current_user.id %>
-                <%# ログインユーザーとスキルを追加する対象のユーザーが等しいときに表示・非表示の設定が行える。非同期で表示flgの更新を行う %>
-                <%= button_to display_title, ajax_display_skills_path(skill_id: skill_key, user_id: user.id), remote: true if display_or_not %>
-            </span>
+            <%# 自分以外の人が追加したスキル and ログインユーザーとスキルを追加するユーザーが同じ場合のときに表示（true）を代入 %>
+            <% display_or_not = @other_user_add_skills.keys.include?(skill_key) && user.id.to_i == current_user.id %>
+
+            <% if display_or_not %>            
+                <%# 自分以外の人が自分に追加したスキルは表示・非表示の設定が行えるボタンを表示 %>
+                <span id="<%= 'display_' << skill_key.to_s %>">
+                    <%# flgが表示（１以外の時）のときは非表示のテキストを代入、それ以外は表示のテキストを代入 %>
+                    <% display_title = @other_user_add_skills[skill_key].first.display_flg == 1 ? "非表示" : "表示" %>
+                    <%# ログインユーザーとスキルを追加する対象のユーザーが等しいときに表示・非表示の設定が行える。非同期で表示flgの更新を行う %>
+                    <%= button_to display_title, ajax_display_skills_path(skill_id: skill_key, user_id: user.id), remote: true %>
+                </span>
+            <% end %>
         <% end %>
         <%# 上位６件のスキルに対して、スキルを推薦してくれているユーザーを１０件まで表示 %>
         <% if 6 > skill_index && !(@recommend_skill_users.blank? || @recommend_skill_users[skill_key].blank?) %>
